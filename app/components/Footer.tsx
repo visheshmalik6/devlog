@@ -1,19 +1,35 @@
-import Link from "next/link";
+"use client";
 
-const navLinks = [
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+const protectedLinks = [
   { label: "Home",      href: "/"          },
   { label: "Explore",   href: "/explore"   },
   { label: "Dashboard", href: "/dashboard" },
-  { label: "Sign In",   href: "/signin"    },
-  { label: "Sign Up",   href: "/signup"    },
+];
+
+const authLinks = [
+  { label: "Sign In", href: "/signin" },
+  { label: "Sign Up", href: "/signup" },
 ];
 
 const legalLinks = [
-  { label: "Privacy",  href: "#" },
-  { label: "Terms",    href: "#" },
+  { label: "Privacy", href: "#" },
+  { label: "Terms",   href: "#" },
 ];
 
 export default function Footer() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  const handleProtectedLink = (href: string) => {
+    if (status === "loading") return;
+    if (!session) router.push("/signin");
+    else router.push(href);
+  };
+
   return (
     <footer className="relative border-t border-[#21262d] bg-[#0d1117] overflow-hidden">
 
@@ -40,7 +56,6 @@ export default function Footer() {
             <p className="font-mono text-[11px] text-[#3d444d] leading-relaxed max-w-[200px]">
               A space for developers to share thoughts, progress, and projects.
             </p>
-            {/* version chip */}
             <span className="inline-block font-mono text-[10px] text-[#58a6ff]/40 border border-[#58a6ff]/10 bg-[#58a6ff]/[0.04] rounded-sm px-2 py-0.5 tracking-widest">
               v2.0 · stable
             </span>
@@ -50,7 +65,17 @@ export default function Footer() {
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#3d444d] mb-4">Navigate</p>
             <ul className="space-y-2.5">
-              {navLinks.map(({ label, href }) => (
+              {protectedLinks.map(({ label, href }) => (
+                <li key={label}>
+                  <button
+                    onClick={() => handleProtectedLink(href)}
+                    className="font-mono text-xs text-[#5c7082] hover:text-[#e6edf3] transition-colors duration-150 text-left"
+                  >
+                    {label}
+                  </button>
+                </li>
+              ))}
+              {authLinks.map(({ label, href }) => (
                 <li key={label}>
                   <Link href={href}
                     className="font-mono text-xs text-[#5c7082] hover:text-[#e6edf3] transition-colors duration-150 no-underline">
@@ -116,6 +141,13 @@ export default function Footer() {
 
         </div>
       </div>
+
+      <style>{`
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+      `}</style>
     </footer>
   );
 }
