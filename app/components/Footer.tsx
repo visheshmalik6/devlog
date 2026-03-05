@@ -8,6 +8,7 @@ const protectedLinks = [
   { label: "Home",      href: "/"          },
   { label: "Explore",   href: "/explore"   },
   { label: "Dashboard", href: "/dashboard" },
+  { label: "Feed",      href: "/feed"      },
 ];
 
 const authLinks = [
@@ -16,8 +17,9 @@ const authLinks = [
 ];
 
 const legalLinks = [
-  { label: "Privacy", href: "#" },
-  { label: "Terms",   href: "#" },
+  { label: "Privacy",  href: "/privacy"  },
+  { label: "Terms",    href: "/terms"    },
+  { label: "Feedback", href: "/feedback" },
 ];
 
 export default function Footer() {
@@ -64,7 +66,7 @@ export default function Footer() {
           {/* Nav column */}
           <div>
             <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-[#3d444d] mb-4">Navigate</p>
-            <ul className="space-y-2.5">
+            <ul className="grid grid-cols-3 gap-x-6 gap-y-2.5">
               {protectedLinks.map(({ label, href }) => (
                 <li key={label}>
                   <button

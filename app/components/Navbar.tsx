@@ -24,7 +24,6 @@ export default function Navbar() {
     }
   }, [session]);
 
-  // Close profile dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) setProfileOpen(false);
@@ -33,7 +32,6 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 
   const handleNavClick = (e: React.MouseEvent, href: string) => {
@@ -42,7 +40,8 @@ export default function Navbar() {
   };
 
   const navLinks = [
-    { href: "/explore",   label: "Explore" },
+    { href: "/explore",   label: "Explore"   },
+    { href: "/feed",      label: "Feed"      },
     { href: "/dashboard", label: "Dashboard" },
   ];
 
@@ -57,24 +56,21 @@ export default function Navbar() {
   return (
     <>
       <nav className="sticky top-0 z-50 w-full bg-[#0d1117]/95 backdrop-blur-md border-b border-[#21262d]">
-        {/* top accent line */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-[#58a6ff]/30 to-transparent pointer-events-none" />
 
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center gap-3">
 
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center gap-2.5 group">
-            <div className="relative">
-              <Image
-                src="/devlog-logo.jpg"
-                alt="DevLog"
-                width={120}
-                height={40}
-                className="h-9 w-auto object-contain"
-                style={{ mixBlendMode: "screen" }}
-                priority
-              />
-            </div>
+            <Image
+              src="/devlog-logo.jpg"
+              alt="DevLog"
+              width={120}
+              height={40}
+              className="h-9 w-auto object-contain"
+              style={{ mixBlendMode: "screen" }}
+              priority
+            />
           </Link>
 
           {/* Desktop nav links */}
@@ -137,6 +133,8 @@ export default function Navbar() {
                       </DropdownLink>
                     )}
                     <DropdownLink href="/explore" onClick={() => setProfileOpen(false)}>Explore</DropdownLink>
+                    <DropdownLink href="/feed" onClick={() => setProfileOpen(false)}>Feed</DropdownLink>
+                    <DropdownLink href="/feedback" onClick={() => setProfileOpen(false)}>Feedback</DropdownLink>
                     <div className="border-t border-[#21262d]" />
                     <button
                       onClick={() => signOut({ callbackUrl: "/" })}
@@ -161,7 +159,6 @@ export default function Navbar() {
 
           {/* Mobile: right side */}
           <div className="flex sm:hidden items-center gap-2">
-            {/* Mobile avatar (if logged in) */}
             {status !== "loading" && session?.user && (
               <div className="w-7 h-7 rounded-full overflow-hidden border border-[#30363d]">
                 {session.user.image
@@ -172,8 +169,6 @@ export default function Navbar() {
                 }
               </div>
             )}
-
-            {/* Hamburger */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="flex flex-col justify-center items-center w-8 h-8 gap-1.5 rounded-md border border-[#21262d] hover:border-[#58a6ff]/40 transition-colors"
@@ -196,7 +191,6 @@ export default function Navbar() {
       >
         <div className="px-4 py-4 flex flex-col gap-1">
 
-          {/* Nav links */}
           {navLinks.map(({ href, label }) => (
             <Link
               key={href}
@@ -213,9 +207,21 @@ export default function Navbar() {
             </Link>
           ))}
 
+          <Link
+            href="/feedback"
+            onClick={() => setMobileOpen(false)}
+            className={`flex items-center justify-between px-3 py-2.5 rounded-md font-mono text-xs uppercase tracking-wider transition-colors ${
+              pathname === "/feedback"
+                ? "bg-[#21262d] text-[#e6edf3]"
+                : "text-[#5c7082] hover:text-[#e6edf3] hover:bg-[#161b22]"
+            }`}
+          >
+            Feedback
+            {pathname === "/feedback" && <span className="w-1.5 h-1.5 rounded-full bg-[#58a6ff]" />}
+          </Link>
+
           <div className="h-px bg-[#21262d] my-2" />
 
-          {/* Auth */}
           {status !== "loading" && (
             session?.user ? (
               <>
@@ -255,7 +261,6 @@ export default function Navbar() {
   );
 }
 
-// Small helper for desktop dropdown links
 function DropdownLink({
   href, onClick, children, muted,
 }: {
